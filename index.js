@@ -53,23 +53,11 @@ const promisify = func => (...args) =>
 	new Promise((resolve, reject) =>
 		func(...args, (err, result) => (err ? reject(err) : resolve(result)))
 	);
-let coords = [];
-
-if (!isNaN(parseInt(process.argv[2]))) {
-	coords.push(parseInt(process.argv[2]));
-}
-
-if (!isNaN(parseInt(process.argv[3]))) {
-	coords.push(parseInt(process.argv[3]));
-}
-if (coords.length !== 1) {
-	console.log(`Please provide destination latitude and destination longitude (in that order!)`);
-	process.exit(1);
-}
 
 const readFileProm = promisify(fs.readFile);
+const speak = promisify(require('./speak'));
 
-async function procStatusJson(filename) {
+async function procStatusJson(filename, coords) {
 	if (filename !== statusJSONPath) {
 		return;
 	}
@@ -95,13 +83,36 @@ async function procStatusJson(filename) {
 				flags.push(i);
 			}
 			if (flags.indexOf('FlagsHasLatLong') >= 0 && json.Latitude && json.Longitude) {
-				coords[2] = json.Latitude;
-				coords[3] = json.Longitude;
-				calculateBearing(coords);
+				const bearing = calculateBearing(coords, [json.Latitude, json.Longitude]);
+				await speak(bearing);
 			}
 		}
 	}
 }
 
-chokidar.watch(directory).on('change', procStatusJson);
-procStatusJson(statusJSONPath);
+function main() {
+	let coords = [];
+
+	if (!isNaN(parseFloat(process.argv[2]))) {
+		coords.push(parseFloat(process.argv[2]));
+	}
+	
+	if (!isNaN(parseFloat(process.argv[3]))) {
+		coords.push(parseFloat(process.argv[3]));
+	}
+
+	if (coords.length !== 2) {
+		console.log(`Please provide destination latitude and destination longitude (in that order!)`);
+		process.exit(1);
+	}
+	
+	const message = `Guiding you towards lat ${Math.floor(coords[0])} lon ${Math.floor(coords[1])}.`;
+	console.log(message);
+	speak(message).catch(err => console.error(`Mute on this platform: ${err.message}`));
+	chokidar.watch(directory).on('change', () => procStatusJson(coords));
+	procStatusJson(statusJSONPath, coords);
+}
+
+if (!module.parent) {
+	main();
+}
