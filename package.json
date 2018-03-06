@@ -5,7 +5,9 @@
   "license": "MIT",
   "dependencies": {
     "chokidar": "^2.0.2",
-    "edge": "^7.10.1",
     "edge-js": "^9.3.4"
+  },
+  "engines": {
+    "node": ">=8.0.0"
   }
 }
