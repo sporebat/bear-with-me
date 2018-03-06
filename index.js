@@ -2,7 +2,7 @@ const fs = require('fs');
 const {homedir} = require('os');
 const {join} = require('path');
 const chokidar = require('chokidar');
-
+const {promisify} = require('util');
 const calculateBearing = require('./bearing');
 const directory = join(homedir(), 'Saved Games', 'Frontier Developments', 'Elite Dangerous');
 const fileName = 'Status.json';
@@ -49,13 +49,8 @@ const flagToLocal = {
 	FlagsInSRV: 1 << 26
 };
 
-const promisify = func => (...args) =>
-	new Promise((resolve, reject) =>
-		func(...args, (err, result) => (err ? reject(err) : resolve(result)))
-	);
-
 const readFileProm = promisify(fs.readFile);
-const speak = promisify(require('./speak'));
+const speak = require('./speak');
 
 async function procStatusJson(filename, coords) {
 	if (filename !== statusJSONPath) {
