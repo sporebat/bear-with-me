@@ -8,17 +8,6 @@ const directory = join(homedir(), 'Saved Games', 'Frontier Developments', 'Elite
 const fileName = 'Status.json';
 const statusJSONPath = join(directory, fileName);
 
-const focusToLocal = {
-	0: 'No Focus',
-	1: 'InternalPanel',
-	2: 'ExternalPanel',
-	3: 'CommsPanel',
-	4: 'RolePanel',
-	5: 'StationServices',
-	6: 'GalaxyMap',
-	7: 'SystemMap'
-};
-
 const flagToLocal = {
 	FlagsDocked: 1 << 0,
 	FlagsLanded: 1 << 1,
