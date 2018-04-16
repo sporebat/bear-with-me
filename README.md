@@ -21,6 +21,7 @@ node index.js <destlat> <destlong>
 
 * Listen for `Scan` (basic or detailed)
 * Decode `Bodyname`, `BodyID`, `Radius`, `SurfaceGravity`, `Landable`, `Materials`, `Parents`
+* Or, don't, as it's hard to force
 
 * Listen for `LaunchSRV`
 
